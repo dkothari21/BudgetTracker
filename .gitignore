@@ -4,6 +4,7 @@ build/
 *.class
 *.jar
 *.war
+*.zip
 
 # IDE
 .idea/
@@ -14,10 +15,16 @@ build/
 .project
 .classpath
 .c9/
+.settings/
+*.swp
+*.swo
+*~
+.DS_Store
 
 # OS
 .DS_Store
 Thumbs.db
+.windows/
 
 # Maven
 target/
@@ -29,15 +36,56 @@ pom.xml.versionsBackup
 .env
 .env.local
 .env.*.local
+.env.development
+.env.test
+.env.production
 
 # Logs
 logs/
 *.log
+*.log.*
 
 # Node (if any frontend)
 node_modules/
 npm-debug.log
+yarn-error.log
 
 # Application specific
 *.properties
 application-*.yml
+application-*.yaml
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Compiled classes and generated files
+out/
+bin/
+*.o
+*.so
+
+# IDE specific
+.classpath
+.project
+.settings/
+.vscode/
+.idea/
+*.code-workspace
+
+# Gradle wrapper (if needed locally, but usually in repo)
+# gradle-wrapper.jar
+
+# Others
+.DS_Store
+.AppleDouble
+.LSOverride
+*.sublime-project
+*.sublime-workspace

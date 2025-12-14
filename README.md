@@ -2,6 +2,11 @@
 
 A Spring Boot REST API for managing personal budgets, built with Java 17 and Spring Boot 3.4.0.
 
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.0-brightgreen)
+![Gradle](https://img.shields.io/badge/Gradle-8.5-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
@@ -9,6 +14,8 @@ A Spring Boot REST API for managing personal budgets, built with Java 17 and Spr
 - [Configuration](#configuration)
 - [API Endpoints](#api-endpoints)
 - [Testing](#testing)
+- [Code Coverage](#code-coverage)
+- [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
@@ -100,6 +107,29 @@ spring:
     show-sql: true
 ```
 
+> [!WARNING]
+> **JWT Secret Configuration**
+> 
+> The JWT secret is currently hardcoded in `application.yml` for development convenience. 
+> 
+> **For production deployments**, you MUST:
+> 1. Remove the hardcoded secret from `application.yml`
+> 2. Set the JWT secret as an environment variable:
+>    ```bash
+>    export JWT_SECRET=your-secure-random-secret-key-here
+>    ```
+> 3. Update `application.yml` to reference the environment variable:
+>    ```yaml
+>    app:
+>      jwt:
+>        secret: ${JWT_SECRET}
+>    ```
+> 
+> Generate a secure secret using:
+> ```bash
+> openssl rand -base64 64
+> ```
+
 ### Accessing H2 Console
 
 When running in development mode, you can access the H2 database console at:
@@ -133,6 +163,62 @@ spring:
 ```
 
 3. Run the application as usual
+
+## API Documentation with Swagger UI
+
+The API includes interactive Swagger UI documentation for easy testing and exploration.
+
+### Accessing Swagger UI
+
+Once the application is running, open your browser and navigate to:
+
+**http://localhost:8080/swagger-ui/index.html**
+
+### How to Test with Swagger UI
+
+> 📖 **New to Swagger?** See the complete beginner's guide: [SWAGGER_GUIDE.md](SWAGGER_GUIDE.md)  
+> 🔑 **How to add token?** See the visual guide: [HOW_TO_ADD_TOKEN.md](HOW_TO_ADD_TOKEN.md)
+
+**Quick Start:**
+
+1. **Start the Application**
+   ```bash
+   ./gradlew bootRun
+   ```
+
+2. **Open Swagger UI** in your browser at http://localhost:8080/swagger-ui/index.html
+
+3. **Register a New User**
+   - Expand the `auth-controller` section
+   - Click on `POST /api/auth/register`
+   - Click "Try it out"
+   - Enter user details and click "Execute"
+
+4. **Login to Get JWT Token**
+   - Click on `POST /api/auth/login`
+   - Enter your credentials and click "Execute"
+   - **Copy the token** from the response
+
+5. **Authorize Swagger UI**
+   - Click the **"Authorize"** button (🔒) at the top
+   - Paste your JWT token in the "Value" field
+   - Click "Authorize" then "Close"
+
+6. **Test Protected Endpoints**
+   - Create a category → Create a budget → Create an account → Create a transaction
+   - All requests will automatically include your JWT token
+
+**Complete Testing Flow:**
+```
+Register → Login → Authorize → Create Category → Create Budget → Create Account → Create Transaction
+```
+
+For detailed step-by-step instructions with screenshots and troubleshooting, see [SWAGGER_GUIDE.md](SWAGGER_GUIDE.md).
+
+### Alternative: OpenAPI JSON
+
+Access the raw OpenAPI specification at:
+- **http://localhost:8080/v3/api-docs**
 
 ## API Endpoints
 
@@ -178,19 +264,62 @@ curl -X POST http://localhost:8080/api/auth/login \
 
 ## Testing
 
+The project includes comprehensive unit and integration tests with code coverage reporting.
+
+### Test Structure
+
+```
+src/test/java/
+├── BudgetAppApplicationTests.java          # Application context test
+├── controller/
+│   └── AuthControllerTest.java             # Auth endpoint integration tests
+└── service/impl/
+    ├── AuthServiceImplTest.java            # Auth service unit tests
+    └── BudgetServiceImplTest.java          # Budget service unit tests
+```
+
 ### Run All Tests
+
 ```bash
 ./gradlew test
 ```
 
-### Run Tests with Coverage
+### Run Tests with Coverage Report
+
 ```bash
 ./gradlew test jacocoTestReport
 ```
 
+The HTML coverage report will be generated at:
+```
+build/reports/jacoco/test/html/index.html
+```
+
 ### Run Specific Test Class
+
 ```bash
-./gradlew test --tests "com.example.budgetapp.YourTestClass"
+./gradlew test --tests "com.example.budgetapp.service.impl.BudgetServiceImplTest"
+```
+
+### Run Tests in Continuous Mode
+
+```bash
+./gradlew test --continuous
+```
+
+## Code Coverage
+
+The project uses JaCoCo for code coverage analysis. Coverage reports exclude:
+- Configuration classes
+- DTOs (Data Transfer Objects)
+- Entity classes
+- Main application class
+
+**Coverage Target**: 70% minimum
+
+To view the coverage report after running tests:
+```bash
+open build/reports/jacoco/test/html/index.html
 ```
 
 ## Troubleshooting
@@ -306,7 +435,9 @@ Then access Swagger UI at: **http://localhost:8080/swagger-ui.html**
 ## Project Structure
 
 ```
-personal-budget-tracker/
+budgettracker/
+├── gradle/
+│   └── wrapper/                 # Gradle wrapper files
 ├── src/
 │   ├── main/
 │   │   ├── java/com/example/budgetapp/
@@ -314,14 +445,28 @@ personal-budget-tracker/
 │   │   │   ├── controller/      # REST controllers
 │   │   │   ├── dto/             # Data Transfer Objects
 │   │   │   ├── entity/          # JPA entities
+│   │   │   ├── exception/       # Custom exceptions
+│   │   │   ├── mapper/          # MapStruct mappers
 │   │   │   ├── repository/      # Data repositories
-│   │   │   ├── service/         # Business logic
+│   │   │   ├── security/        # JWT & security components
+│   │   │   ├── service/         # Service interfaces
+│   │   │   │   └── impl/        # Service implementations
 │   │   │   └── BudgetAppApplication.java
 │   │   └── resources/
 │   │       └── application.yml  # Application configuration
-│   └── test/                    # Test files
+│   └── test/
+│       ├── java/com/example/budgetapp/
+│       │   ├── controller/      # Controller integration tests
+│       │   └── service/impl/    # Service unit tests
+│       └── resources/
+│           └── application-test.yml  # Test configuration
 ├── build.gradle                 # Gradle build configuration
+├── gradlew                      # Gradle wrapper script (Unix/Mac)
+├── gradlew.bat                  # Gradle wrapper script (Windows)
 ├── docker-compose.yml           # PostgreSQL setup
+├── test-endpoints.sh            # Automated API testing script
+├── SWAGGER_GUIDE.md             # Complete Swagger UI testing guide
+├── CONTRIBUTING.md              # Contribution guidelines
 └── README.md                    # This file
 ```
 

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: budgetapp-test
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  h2:
+    console:
+      enabled: false
+
+app:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    expiration-milliseconds: 3600000 # 1 hour for tests
+
+logging:
+  level:
+    org.springframework.web: WARN
+    com.example.budgetapp: INFO
+    org.hibernate: WARN

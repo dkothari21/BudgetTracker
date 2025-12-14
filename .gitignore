@@ -20,11 +20,15 @@ build/
 *.swo
 *~
 .DS_Store
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
 
 # OS
-.DS_Store
 Thumbs.db
 .windows/
+.AppleDouble
+.LSOverride
 
 # Maven
 target/
@@ -54,12 +58,12 @@ yarn-error.log
 *.properties
 application-*.yml
 application-*.yaml
+# Allow test configuration
+!src/test/resources/application-test.yml
 
 # Temporary files
 *.tmp
 *.bak
-*.swp
-*.swo
 
 # Database
 *.db
@@ -72,20 +76,10 @@ bin/
 *.o
 *.so
 
-# IDE specific
-.classpath
-.project
-.settings/
-.vscode/
-.idea/
-*.code-workspace
+# Test coverage reports
+.jacoco/
+jacoco.exec
 
 # Gradle wrapper (if needed locally, but usually in repo)
 # gradle-wrapper.jar
 
-# Others
-.DS_Store
-.AppleDouble
-.LSOverride
-*.sublime-project
-*.sublime-workspace
